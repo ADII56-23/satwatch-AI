@@ -1,0 +1,104 @@
+/* Global Overrides */
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Leaflet Overrides */
+.leaflet-container {
+  background: #050505 !important;
+  outline: none;
+}
+
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup-tip {
+  display: none !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+
+.sat-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Filter Classes for Historical Simulation */
+.sepia-filter {
+  filter: sepia(0.6) contrast(1.2) brightness(0.9) grayscale(0.2);
+}
+
+.contrast-filter {
+  filter: contrast(1.15) saturation(0.85);
+}
+
+/* Custom Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Map Labels Fix */
+.leaflet-control-attribution {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 8px !important;
+  border: none !important;
+}
