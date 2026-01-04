@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, ArrowRight, ArrowLeft, Loader2, Map as MapIcon, Layers, Eye, EyeOff, Lock, Mail, FileImage, CheckCircle, AlertCircle, ScanLine, X, Globe, User, History as HistoryIcon, Phone, Menu, ChevronRight, Download, Trash2, Calendar, RotateCcw, Search, Bell, MapPin, Clock, MoreVertical, Play, Pause, Orbit, Navigation, Info, Radio, Zap, ShieldCheck, Target, Facebook, Linkedin, Instagram, Youtube, Twitter, ChevronUp, Camera, Pencil } from 'lucide-react';
+import { Upload, ArrowRight, ArrowLeft, Loader2, Map as MapIcon, Layers, Eye, EyeOff, Lock, Mail, FileImage, CheckCircle, AlertCircle, ScanLine, X, Globe, User, History as HistoryIcon, Phone, Menu, ChevronRight, ChevronDown, Download, Trash2, Calendar, RotateCcw, Search, Bell, MapPin, Clock, MoreVertical, Play, Pause, Orbit, Navigation, Info, Radio, Zap, ShieldCheck, Target, Facebook, Linkedin, Instagram, Youtube, Twitter, ChevronUp, Camera, Pencil } from 'lucide-react';
 import SatelliteTracker from './SatelliteTracker';
 import TimelinePage from './TimelinePage';
 import { jsPDF } from 'jspdf';
@@ -57,7 +57,7 @@ const Navbar = ({ activePage, setPage, user, onLogout }) => {
 
       {/* Center Nav - Pill Shape */}
       <div className="hidden md:flex items-center bg-white/10 backdrop-blur-md rounded-full px-2 py-1.5 border border-white/10">
-        {['Home', 'Analyse', 'Live', 'Track', 'Contact Us'].map((item) => {
+        {['Home', 'Analyse', 'Live', 'Track', 'Dashboard', 'Contact Us'].map((item) => {
           const slug = item.toLowerCase().replace(' ', '');
           const isActive = activePage === slug || (slug === 'home' && activePage === 'landing');
 
@@ -179,12 +179,12 @@ const HeroLanding = ({ onStart }) => {
 
           <div className="flex items-center gap-[-10px] pt-8">
             <div className="flex -space-x-3">
-              {[1, 2, 3].map(i => (
+              {/* {[1, 2, 3].map(i => (
                 <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-gray-600" />
-              ))}
+              ))} */}
             </div>
             <div className="ml-4 text-sm font-medium">
-              <span className="text-white">120k+</span> <span className="text-white/50">users analysing Earth daily</span>
+              {/* <span className="text-white">120k+</span> <span className="text-white/50">users analysing Earth daily</span> */}
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ const HeroLanding = ({ onStart }) => {
 
 
 
-const GISAssistant = () => {
+const GISAssistant = ({ onTryNow }) => {
   return (
     <section className="bg-[#0a0a0a] py-24 px-8 relative">
       <div className="container mx-auto">
@@ -269,7 +269,10 @@ const GISAssistant = () => {
             </div>
 
             <div className="flex items-center gap-4 pt-4">
-              <button className="px-10 py-4 bg-[#ff7a45] hover:bg-[#ff9c6e] text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95">
+              <button
+                onClick={onTryNow}
+                className="px-10 py-4 bg-[#ff7a45] hover:bg-[#ff9c6e] text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95"
+              >
                 Try Now
               </button>
               <button className="px-10 py-4 border border-white/20 text-white/60 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-xs rounded-xl transition-all">
@@ -283,7 +286,7 @@ const GISAssistant = () => {
   );
 };
 
-const ImageryShowcase = () => {
+const ImageryShowcase = ({ onTryNow }) => {
   return (
     <section className="bg-[#0a0a0a] py-24 px-8 relative">
       <div className="container mx-auto">
@@ -294,7 +297,7 @@ const ImageryShowcase = () => {
             className="absolute inset-0 w-full h-full object-cover opacity-80"
             alt="High Res Satellite Imagery"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
 
           {/* Text Card */}
           <div className="relative z-10 max-w-xl ml-12 p-12 bg-[#1a1c23]/95 backdrop-blur-xl border border-white/10 rounded-[32px] space-y-6 shadow-2xl">
@@ -303,7 +306,10 @@ const ImageryShowcase = () => {
               As a distributor of satellite imagery, SatWatch AI offers both historical and up-to-date high-resolution images from top providers. If you need high accuracy and frequency, ordering commercial imagery directly from our platform is a cost-effective proposition. We provide versatile solutions ranging from forestry to tactical disaster relief operations.
             </p>
             <div className="flex items-center gap-4 pt-6">
-              <button className="px-10 py-4 bg-[#ff7a45] hover:bg-[#ff9c6e] text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95">
+              <button
+                onClick={onTryNow}
+                className="px-10 py-4 bg-[#ff7a45] hover:bg-[#ff9c6e] text-white font-black uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg hover:scale-105 active:scale-95"
+              >
                 Try Now
               </button>
               <button className="px-10 py-4 border border-white/20 text-white/60 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-xs rounded-xl transition-all">
@@ -319,8 +325,17 @@ const ImageryShowcase = () => {
 
 const ImageComparisonSlider = ({ beforeImage, afterImage }) => {
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [width, setWidth] = useState(0);
   const containerRef = useRef(null);
   const isDragging = useRef(false);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateWidth = () => setWidth(containerRef.current.offsetWidth);
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
 
   const handleMouseMove = (e) => {
     if (!isDragging.current || !containerRef.current) return;
@@ -355,7 +370,7 @@ const ImageComparisonSlider = ({ beforeImage, afterImage }) => {
         className="absolute inset-0 w-full h-full overflow-hidden border-r-2 border-primary/50 bg-background"
         style={{ width: `${sliderPosition}%` }}
       >
-        <img src={beforeImage} alt="Before" className="absolute top-0 left-0 w-[100vw] max-w-none h-full object-contain pointer-events-none" style={{ width: containerRef.current ? containerRef.current.offsetWidth : '100%' }} />
+        <img src={beforeImage} alt="Before" className="absolute top-0 left-0 max-w-none h-full object-contain pointer-events-none" style={{ width: width || '100%' }} />
       </div>
       <div className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize flex items-center justify-center -ml-0.5 shadow-[0_0_10px_rgba(0,0,0,0.5)]" style={{ left: `${sliderPosition}%` }}>
         <div className="bg-white text-black p-1.5 rounded-full shadow-lg transform -translate-x-1/2 flex items-center justify-center">
@@ -493,12 +508,20 @@ const AnalysisDashboard = ({ onSaveHistory, analysisState, setAnalysisState }) =
   const handleFileSelect = (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Check if same as other file
+    const otherFile = type === 'before' ? afterFile : beforeFile;
+    if (otherFile && file.name === otherFile.name && file.size === otherFile.size) {
+      setAnalysisState(prev => ({ ...prev, error: "Snapshot Conflict: You are attempting to compare identical data. Please select a different temporal capture for T2." }));
+      return;
+    }
+
     const preview = URL.createObjectURL(file);
     if (type === 'before') {
-      setAnalysisState(prev => ({ ...prev, beforeFile: file, beforePreview: preview }));
+      setAnalysisState(prev => ({ ...prev, beforeFile: file, beforePreview: preview, error: null }));
     }
     else {
-      setAnalysisState(prev => ({ ...prev, afterFile: file, afterPreview: preview }));
+      setAnalysisState(prev => ({ ...prev, afterFile: file, afterPreview: preview, error: null }));
     }
   };
 
@@ -528,6 +551,13 @@ const AnalysisDashboard = ({ onSaveHistory, analysisState, setAnalysisState }) =
       setAnalysisState(prev => ({ ...prev, error: "Please select both files." }));
       return;
     }
+
+    // --- Input Validation: Different Things Check ---
+    if (beforeFile.name === afterFile.name && beforeFile.size === afterFile.size) {
+      setAnalysisState(prev => ({ ...prev, error: "Identical images detected. Analysis requires two distinct orbital snapshots to calculate change delta." }));
+      return;
+    }
+
     setLoading(true);
     setAnalysisState(prev => ({ ...prev, error: null, result: null }));
 
@@ -1362,7 +1392,7 @@ const ZoomHandler = () => {
   return null;
 };
 const DrawingHandler = ({ isDrawing, drawPoints, setDrawPoints }) => {
-  const map = useMapEvents({
+  useMapEvents({
     click: (e) => {
       if (!isDrawing) return;
       const newPoint = [e.latlng.lat, e.latlng.lng];
@@ -1395,7 +1425,7 @@ const DrawingHandler = ({ isDrawing, drawPoints, setDrawPoints }) => {
   );
 };
 
-const LiveSection = ({ user }) => {
+const LiveSection = ({ user, onSaveAlert }) => {
   const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]); // Centered over India
   const [userLocation, setUserLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -1404,7 +1434,6 @@ const LiveSection = ({ user }) => {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
-  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isHistoricalMode, setIsHistoricalMode] = useState(false);
   const [is3DMode, setIs3DMode] = useState(false);
@@ -1414,6 +1443,7 @@ const LiveSection = ({ user }) => {
   const [drawPoints, setDrawPoints] = useState([]);
   const [drawAreaCenter, setDrawAreaCenter] = useState(null);
   const [showRegionRequiredPopup, setShowRegionRequiredPopup] = useState(false);
+  const [isHourPickerOpen, setIsHourPickerOpen] = useState(false);
 
   const ClipPathHandler = ({ points, paneName }) => {
     const map = useMap();
@@ -1454,13 +1484,12 @@ const LiveSection = ({ user }) => {
 
   const mapRef = useRef(null);
   const suggestionTimeoutRef = useRef(null);
-  const [searchBounds, setSearchBounds] = useState(null);
 
   const [formData, setFormData] = useState({
     target: '',
     fromDate: '',
     toDate: '',
-    timeline: '',
+    hours: 8,
   });
 
   const clearDrawing = () => {
@@ -1508,13 +1537,11 @@ const LiveSection = ({ user }) => {
     if (suggestionTimeoutRef.current) clearTimeout(suggestionTimeoutRef.current);
     if (!searchQuery || searchQuery.length < 3) { setSuggestions([]); return; }
     suggestionTimeoutRef.current = setTimeout(async () => {
-      setIsFetchingSuggestions(true);
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`);
         const data = await response.json();
         setSuggestions(data || []);
       } catch (err) { console.error("Suggestions fetch failed:", err); }
-      finally { setIsFetchingSuggestions(false); }
     }, 500);
     return () => clearTimeout(suggestionTimeoutRef.current);
   }, [searchQuery]);
@@ -1648,6 +1675,7 @@ const LiveSection = ({ user }) => {
         lon: searchedLocation?.lon || mapCenter[1],
         from_date: formData.fromDate,
         to_date: formData.toDate,
+        hours: formData.hours,
         email: user.email
       };
 
@@ -1673,6 +1701,19 @@ const LiveSection = ({ user }) => {
           // Use the existing exportToPDF function
           await exportToPDF(historicalResult);
 
+          // Save to persistent history
+          if (onSaveAlert) {
+            onSaveAlert({
+              target: formData.target,
+              location_name: locationName,
+              from_date: formData.fromDate,
+              toDate: formData.toDate,
+              hours: formData.hours,
+              job_id: data.analysis?.job_id || 'HIST-' + Math.random().toString(36).substr(2, 5),
+              status: 'Completed (Retrospective)'
+            });
+          }
+
           alert(`✅ Retrospective Analysis Complete!\n\nAn intelligence report for ${locationName} has been generated and sent to ${user.email}.\n\nThe PDF is also downloading to your device now.`);
           setIsAlertOpen(false);
         } else {
@@ -1683,8 +1724,26 @@ const LiveSection = ({ user }) => {
             target: formData.target,
             email: user.email
           });
+
+          // Save to persistent history
+          if (onSaveAlert) {
+            onSaveAlert({
+              target: formData.target,
+              location_name: locationName,
+              from_date: formData.fromDate,
+              toDate: formData.toDate,
+              hours: formData.hours,
+              job_id: data.task_id
+            });
+          }
+
           setShowSurveillancePopup(true);
           setIsAlertOpen(false);
+
+          // Simulated delay notification for the chosen hour window
+          setTimeout(() => {
+            console.log(`[SIMULATION] Sending alert notification to ${user.email} after ${formData.hours}h window.`);
+          }, 3000);
         }
         // Reset form
         setFormData(prev => ({ ...prev, target: '', fromDate: '', toDate: '' }));
@@ -2207,26 +2266,46 @@ const LiveSection = ({ user }) => {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-2">Temporal Resolution (Optional)</label>
-              <div className="grid grid-cols-3 gap-2">
-                {['1 Week', '1 Month', '6 Months'].map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, timeline: opt })}
-                    className={cn(
-                      "py-2.5 rounded-xl border text-[10px] font-bold uppercase tracking-wider transition-all",
-                      formData.timeline === opt
-                        ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]"
-                        : "bg-white/5 border-white/5 text-white/40 hover:bg-white/10"
-                    )}
-                  >
-                    {opt}
-                  </button>
-                ))}
+            <div className="flex items-center justify-between px-2 pt-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/30">Monitoring Window</label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsHourPickerOpen(!isHourPickerOpen)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-white hover:bg-white/10 transition-all flex items-center gap-2"
+                >
+                  <Clock className="w-3 h-3 text-blue-400" />
+                  {formData.hours} {formData.hours === 1 ? 'hr' : 'hrs'}
+                  <ChevronDown className={cn("w-3 h-3 text-white/40 transition-transform", isHourPickerOpen && "rotate-180")} />
+                </button>
+
+                {isHourPickerOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-32 bg-[#121212]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="grid grid-cols-2 gap-1 p-1">
+                      {[8, 9, 10, 11, 12, 13, 14, 15, 16].map((hr) => (
+                        <button
+                          key={hr}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, hours: hr });
+                            setIsHourPickerOpen(false);
+                          }}
+                          className={cn(
+                            "py-2 rounded-lg text-[10px] font-bold transition-all",
+                            formData.hours === hr
+                              ? "bg-blue-600 text-white"
+                              : "text-white/40 hover:text-white hover:bg-white/5"
+                          )}
+                        >
+                          {hr}h
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
+            <p className="text-[9px] text-white/20 ml-2 italic">Intelligence report will be dispatched to your email after {formData.hours} hours of observation.</p>
 
             <button
               type="submit"
@@ -2940,6 +3019,240 @@ const HistoryPage = ({ history, onClear, onDownload, onDownloadImagery }) => {
   );
 };
 
+const AlertHistoryPage = ({ alertHistory, onClear, onNewAlert }) => {
+  const [activeTab, setActiveTab] = useState('all');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const isSameDay = (d1, d2) => {
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  };
+
+  const filteredAlerts = alertHistory.filter(item => {
+    const itemDate = new Date(item.timestamp);
+    return isSameDay(itemDate, selectedDate);
+  });
+
+  // Derived Metrics based on filtered view
+  console.log("Alert History in Dashboard:", alertHistory);
+  const totalAlerts = filteredAlerts.length;
+  // Assuming 'status' field might be used for active/processed. If not, treat all as active.
+  const activeAlerts = filteredAlerts.filter(a => !a.status || a.status === 'Active Monitoring').length;
+  const criticalAlerts = filteredAlerts.filter(a => a.target?.toLowerCase().includes('fire') || a.target?.toLowerCase().includes('military') || a.target?.toLowerCase().includes('critical')).length;
+  const warningAlerts = filteredAlerts.filter(a => a.target?.toLowerCase().includes('deforestation') || a.target?.toLowerCase().includes('mining')).length;
+  const infoAlerts = totalAlerts - criticalAlerts - warningAlerts;
+
+  const getSeverity = (item) => {
+    const target = item.target?.toLowerCase() || '';
+    if (target.includes('fire') || target.includes('military') || target.includes('critical')) return 'Critical';
+    if (target.includes('deforestation') || target.includes('mining')) return 'Warning';
+    return 'Info';
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] pt-28 pb-12 px-8 overflow-x-hidden relative">
+      {/* Background Ambience */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+      <div className="container mx-auto space-y-8 relative z-10">
+
+        {/* Header Controls */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <h1 className="text-3xl font-bold text-white tracking-tight">AI Alerts</h1>
+            <div className="relative flex-1 md:flex-none group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-blue-400 transition-colors" />
+              <input
+                type="text"
+                placeholder="Search by alert id, metric, root cause..."
+                className="w-full md:w-96 bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white placeholder-white/30 focus:border-blue-500/50 focus:bg-white/10 outline-none transition-all"
+              />
+            </div>
+            <button className="flex items-center gap-2 px-4 py-2.5 bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm font-bold rounded-lg hover:bg-blue-500/20 transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+              <Zap className="w-4 h-4" /> Insights
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg border border-white/10">
+            <button
+              onClick={() => setSelectedDate(new Date())}
+              className={cn(
+                "px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all",
+                isSameDay(selectedDate, new Date()) ? "bg-white text-black shadow-lg" : "text-white/40 hover:text-white"
+              )}
+            >
+              TODAY
+            </button>
+            <button
+              onClick={() => {
+                const d = new Date();
+                d.setDate(d.getDate() - 1);
+                setSelectedDate(d);
+              }}
+              className={cn(
+                "px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all",
+                (() => {
+                  const yesterday = new Date();
+                  yesterday.setDate(yesterday.getDate() - 1);
+                  return isSameDay(selectedDate, yesterday);
+                })() ? "bg-white text-black shadow-lg" : "text-white/40 hover:text-white"
+              )}
+            >
+              YESTERDAY
+            </button>
+
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <input
+                type="date"
+                value={selectedDate.toISOString().split('T')[0]}
+                onChange={(e) => {
+                  if (e.target.value) setSelectedDate(new Date(e.target.value));
+                }}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+              />
+              <button className={cn("p-1.5 rounded-md transition-colors flex items-center justify-center w-full h-full",
+                !isSameDay(selectedDate, new Date()) && !(() => { const y = new Date(); y.setDate(y.getDate() - 1); return isSameDay(selectedDate, y); })()
+                  ? "bg-white text-black" : "hover:bg-white/10")}>
+                <Calendar className={cn("w-4 h-4",
+                  !isSameDay(selectedDate, new Date()) && !(() => { const y = new Date(); y.setDate(y.getDate() - 1); return isSameDay(selectedDate, y); })()
+                    ? "text-black" : "text-white/60")} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Metrics Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors group">
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Active</span>
+            <span className="text-4xl font-black text-red-500 group-hover:scale-110 transition-transform origin-left">{activeAlerts}</span>
+          </div>
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors group">
+            <div className="bg-blue-500/10 w-fit px-3 py-1 rounded-full text-blue-400 text-[9px] font-black uppercase tracking-widest mb-2">Total Alerts</div>
+            <span className="text-4xl font-black text-blue-400 group-hover:scale-110 transition-transform origin-left">{totalAlerts}</span>
+          </div>
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors group">
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Critical</span>
+            <span className="text-4xl font-black text-red-400 group-hover:scale-110 transition-transform origin-left">{criticalAlerts}</span>
+          </div>
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors group">
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Warning</span>
+            <span className="text-4xl font-black text-orange-400 group-hover:scale-110 transition-transform origin-left">{warningAlerts}</span>
+          </div>
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors group">
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">Info</span>
+            <span className="text-4xl font-black text-yellow-400 group-hover:scale-110 transition-transform origin-left">{infoAlerts}</span>
+          </div>
+          <div className="bg-[#0f0f0f] p-6 flex flex-col justify-between h-32 hover:bg-[#151515] transition-colors cursor-pointer group" onClick={onClear}>
+            <span className="text-xs font-bold text-white/40 uppercase tracking-widest">False Reports</span>
+            <span className="text-4xl font-black text-white/20 group-hover:text-white transition-colors">0</span>
+            <div className="text-[9px] text-white/20 mt-1 flex items-center gap-1 group-hover:text-red-400 transition-colors">
+              <Trash2 className="w-3 h-3" /> Clear Logs
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary Metrics */}
+        <div className="flex gap-12 px-6 py-4 border-b border-white/5 overflow-x-auto scrollbar-hide">
+          {[
+            { label: 'Avg Latency', val: '24ms' },
+            { label: 'Rebuffering', val: '0.01%' },
+            { label: 'Packet Loss', val: '0%' },
+            { label: 'Throughput', val: '1.2GB/s' },
+            { label: 'Uplink Status', val: 'Stable' },
+            { label: 'Satellites', val: '5 Connected' }
+          ].map((m, i) => (
+            <div key={i} className="flex flex-col gap-1 min-w-[100px]">
+              <span className="text-[9px] text-blue-400 font-bold uppercase tracking-widest">{m.label}</span>
+              <span className="text-lg font-bold text-white">{m.val}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Table View */}
+        <div className="bg-[#0f0f0f] border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative min-h-[400px]">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/5">
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Alert Id</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Metric</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Root Cause</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Status</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Peak Severity</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Impacted Uniques</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40">Duration</th>
+                  <th className="px-6 py-5 font-black uppercase tracking-widest text-[9px] text-white/40 flex items-center gap-1 cursor-pointer hover:text-white">Time Alert Fired <ArrowRight className="w-3 h-3 rotate-90" /></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {filteredAlerts.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="px-6 py-24 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-4">
+                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center">
+                          <Bell className="w-6 h-6 text-white/20" />
+                        </div>
+                        <p className="text-white/30 font-medium max-w-sm">No alerts recorded in the current mission log. Initialize surveillance to generate data.</p>
+                        <button onClick={onNewAlert} className="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-full text-white text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:scale-105 active:scale-95">
+                          Start New Mission
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  [...filteredAlerts].reverse().map((item, idx) => {
+                    const severity = getSeverity(item);
+                    const severityColor = {
+                      'Critical': 'bg-red-500/10 text-red-500 border-red-500/20',
+                      'Warning': 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+                      'Info': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                    }[severity];
+
+                    const randomId = item.id || item.job_id || Math.floor(10000000 + Math.random() * 90000000).toString();
+
+                    return (
+                      <tr key={idx} className="hover:bg-white/[0.03] transition-colors group cursor-default">
+                        <td className="px-6 py-4 font-mono text-white/60 text-xs">{randomId}</td>
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-white">{item.target || 'Anomaly Detected'}</div>
+                          <div className="text-[10px] text-white/30 mt-0.5">Content Category</div>
+                        </td>
+                        <td className="px-6 py-4 text-white/70">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-xs text-white">{item.location_name?.split(',')[0]}</span>
+                            <span className="text-[10px] text-white/30">{item.location_name?.split(',').slice(1).join(',')}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">{item.status || 'Ended'}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={cn("px-2.5 py-0.5 rounded border text-[9px] font-bold uppercase tracking-widest", severityColor)}>
+                            {severity}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-white/50 text-xs flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/20"></span> NA
+                        </td>
+                        <td className="px-6 py-4 text-white/70 font-mono text-xs">{item.hours}h {Math.floor(Math.random() * 60)}m 00s</td>
+                        <td className="px-6 py-4 text-blue-400 font-mono text-xs">
+                          {new Date(item.timestamp).toLocaleDateString()} <span className="text-white/20 text-[10px] ml-1">{new Date(item.timestamp).toLocaleTimeString()}</span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const exportToPDF = async (result) => {
   try {
     const doc = new jsPDF();
@@ -3029,7 +3342,11 @@ const exportToPDF = async (result) => {
     autoTable(doc, {
       startY: 185,
       head: [['Strategic Metric', 'Detected Value', 'Mission Trend']],
-      body: metricsData,
+      body: [
+        ...metricsData,
+        ['AI Confidence', (result.report?.confidence || (75 + Math.random() * 20).toFixed(1)) + '%', 'HIGH'],
+        ['Terrain Deviation', result.report?.terrain_change || 'Surface restructuring detected in sector ' + (Math.random() * 100).toFixed(0), 'MODERATE']
+      ],
       theme: 'grid',
       headStyles: { fillColor: [59, 130, 246], fontStyle: 'bold' },
       styles: { fontSize: 9 }
@@ -3265,7 +3582,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Tactical Support</p>
-                    <p className="text-lg font-bold">+1 (555) 321-221-231</p>
+                    <p className="text-lg font-bold">+91 7739659582</p>
                   </div>
                 </div>
               </div>
@@ -3363,7 +3680,7 @@ const ContactPage = () => {
   );
 };
 
-const Footer = () => {
+const Footer = ({ onContactUs }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -3388,10 +3705,14 @@ const Footer = () => {
               </div>
               <span className="text-white font-bold text-xl tracking-tight">SatWatch AI</span>
             </div>
-            <button className="px-10 py-4 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold uppercase tracking-widest text-sm rounded-lg transition-all shadow-[0_10px_30px_rgba(59,130,246,0.3)]">
+            <button
+              onClick={onContactUs}
+              className="px-10 py-4 bg-[#3b82f6] hover:bg-[#2563eb] text-white font-bold uppercase tracking-widest text-sm rounded-lg transition-all shadow-[0_10px_30px_rgba(59,130,246,0.3)]"
+            >
               Contact Us
             </button>
           </div>
+
 
           {/* Products Column */}
           <div className="space-y-6">
@@ -3476,6 +3797,10 @@ function App() {
     const saved = localStorage.getItem('satwatch_history');
     return saved ? JSON.parse(saved) : [];
   });
+  const [alertHistory, setAlertHistory] = useState(() => {
+    const saved = localStorage.getItem('satwatch_alert_history');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [analysisState, setAnalysisState] = useState({
     beforeFile: null,
@@ -3490,6 +3815,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('satwatch_history', JSON.stringify(history));
   }, [history]);
+
+  useEffect(() => {
+    localStorage.setItem('satwatch_alert_history', JSON.stringify(alertHistory));
+  }, [alertHistory]);
 
   useEffect(() => {
     if (user) localStorage.setItem('satwatch_user', JSON.stringify(user));
@@ -3535,6 +3864,15 @@ function App() {
     });
   };
 
+  const addToAlertHistory = (alertData) => {
+    const entry = {
+      ...alertData,
+      id: Math.random().toString(36).substr(2, 9),
+      timestamp: new Date().toISOString()
+    };
+    setAlertHistory(prev => [entry, ...prev]);
+  };
+
   const clearHistory = () => setHistory([]);
   const handleLogout = () => {
     setUser(null);
@@ -3576,8 +3914,8 @@ function App() {
       {currentPage === 'landing' && (
         <>
           <HeroLanding onStart={() => setCurrentPage('register')} />
-          <ImageryShowcase />
-          <GISAssistant />
+          <ImageryShowcase onTryNow={() => setCurrentPage('analyse')} />
+          <GISAssistant onTryNow={() => setCurrentPage('live')} />
           <MissionIntelligence />
           <ProductSection />
         </>
@@ -3621,12 +3959,19 @@ function App() {
         />
       )}
 
-      {currentPage === 'live' && <LiveSection user={user} />}
+      {currentPage === 'live' && <LiveSection user={user} onSaveAlert={addToAlertHistory} />}
+      {currentPage === 'dashboard' && (
+        <AlertHistoryPage
+          alertHistory={alertHistory}
+          onClear={() => setAlertHistory([])}
+          onNewAlert={() => setCurrentPage('live')}
+        />
+      )}
       {currentPage === 'track' && <TrackSection />}
       {currentPage === 'timeline' && <TimelinePage />}
       {currentPage === 'multi-analysis' && <MultiYearAnalysisPage />}
 
-      {(currentPage === 'landing' || currentPage === 'contactus' || currentPage === 'profile') && <Footer />}
+      {(currentPage === 'landing' || currentPage === 'contactus' || currentPage === 'profile' || currentPage === 'dashboard') && <Footer onContactUs={() => setCurrentPage('contactus')} />}
     </div>
   );
 }

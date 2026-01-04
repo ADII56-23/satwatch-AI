@@ -1,6 +1,6 @@
 // Dedicated Timeline Page Component
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import { ArrowLeft, ArrowRight, Play, Pause, Clock as ClockIcon, X } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
