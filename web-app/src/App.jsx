@@ -22,7 +22,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "https://satwatch-ai-backend.onrender.com";
 
 // --- Utility Components ---
 function cn(...inputs) {
