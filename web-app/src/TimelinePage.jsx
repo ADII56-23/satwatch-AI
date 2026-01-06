@@ -4,7 +4,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { ArrowLeft, ArrowRight, Play, Pause, Clock as ClockIcon, X } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
-const API_URL = import.meta.env.VITE_API_URL || "https://satwatch-ai-backend.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const TimelinePage = () => {
   const [mapCenter, setMapCenter] = useState([20.5937, 78.9629]);

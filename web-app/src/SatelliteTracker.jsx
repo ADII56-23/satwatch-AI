@@ -4,7 +4,7 @@ import L from 'leaflet';
 import * as satellite from 'satellite.js';
 import { Orbit, Info, Radio, Zap, Navigation } from 'lucide-react';
 
-const SatelliteTracker = ({ enabled, group = "active", apiUrl = import.meta.env.VITE_API_URL || "https://satwatch-ai-backend.onrender.com" }) => {
+const SatelliteTracker = ({ enabled, group = "active", apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000" }) => {
   const [satellites, setSatellites] = useState([]);
   const [selectedSat, setSelectedSat] = useState(null);
   const [positions, setPositions] = useState({});
